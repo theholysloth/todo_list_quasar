@@ -67,20 +67,25 @@ export default {
       const payload = {
         nom: this.localNom,
         task: this.localTask,
-        date: this.localDate
+        date: this.localDate,
+        done:false
       };
 
       if (this.mode === "add") {
-        this.$emit("add-task", payload);
-      } else {
-        this.$emit("update-task", { ...payload, index: this.index });
-      }
+        //this.$emit("add-task", payload); avec les store on n'emit plus ( on emit pour les donnée qui seront locale)
 
-      // reset uniquement en mode ajout
-      if (this.mode === "add") {
+        //on peut directement commit la mutation grace à commit mais on va suivre les regles 
+        this.$store.dispatch('addTask',payload);
+
+        // reset uniquement en mode ajout
+
         this.localNom = "";
         this.localTask = "";
         this.localDate = "";
+      } else {
+        //this.$emit("update-task", { ...payload, index: this.index });
+        
+        this.$store.dispatch('updateTask',{...payload,index:this.index});
       }
     }
   }

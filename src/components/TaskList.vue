@@ -5,7 +5,7 @@
       title="Mes Tâches"
       :data="filteredTasks"
       :columns="columns"
-      row-key="name"
+      row-key="nom"
       flat
       bordered
     >
@@ -18,6 +18,8 @@
         </q-td>
       </template>
 
+
+      <!--on abandonne aussi les props on va recuperer directement les donnees dans le store-->
       <template v-slot:body-cell-nom="props">
         <q-td :props="props" :class="{ 'task-done': props.row.done }">
           {{ props.row.nom }}
@@ -50,7 +52,6 @@
 export default {
   name: "TaskList",
   props: {
-    tasks: Array,
     search: String
   },
   data() {
@@ -65,8 +66,12 @@ export default {
     }
   },
   computed: {
+    tasks(){
+      return this.$store.getters.tasks
+    },
+    
     filteredTasks() {
-      if (!this.search) return this.tasks;
+      if (!this.search) return this.tasks;//le this.tasks vient maintenant du task obtenu dans computed 
       const s = this.search.toLowerCase();
       return this.tasks.filter(t => 
         t.nom.toLowerCase().includes(s) || t.task.toLowerCase().includes(s)
