@@ -15,6 +15,7 @@ import state from "./state"
 export default {
     ADD_TASK(state,task){
         state.tasks.push(task)
+        this.$router.push('/')
     },
     
     UPDATE_TASK(state,payload){
@@ -25,5 +26,18 @@ export default {
             task,
             date 
         })
+        this.$router.push('/list')
+    },
+    
+    DELETE_TASK(state,index){
+        state.tasks.splice(index,1)
+    },
+
+    TOGGLE_DONE(state,index){
+        state.tasks[index].done = !state.tasks[index].done
+    },
+
+    SET_SEARCH(state,value){
+        state.search = value
     }
 }

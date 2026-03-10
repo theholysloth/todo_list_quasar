@@ -9,5 +9,9 @@ export default {
 
     tasks: (state) => {
         return state.tasks
+    }, 
+
+    search: (state) => {
+        return state.search
     }
 }
