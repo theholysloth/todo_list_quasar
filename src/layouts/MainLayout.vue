@@ -17,7 +17,6 @@
 
         <search-bar
         v-if="$route.path === '/list'"
-        @search="search = $event"
       />
 
         <div>Quasar v{{ $q.version }}</div>
@@ -48,12 +47,6 @@
 
     <q-page-container>
       <router-view
-        :tasks="tasks"
-        :search="search"
-        @toggle-done="toggleDone"
-        @add-task="addTaskFromChild"
-        @update-task="updateTaskFromChild"
-        @delete-task="deleteTask"
         @edit-task="goToEditPage"
       />
 
@@ -64,51 +57,6 @@
 <script>
 import SearchBar from 'src/components/SearchBar.vue';
 
-const linksData = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
 export default {
   name: 'MainLayout',
   components: { SearchBar },
@@ -116,14 +64,13 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData,
-      tasks: [],
-      search: ''
     }
   },
 
   methods: {
-    toggleDone (index) {
+    //mainLayout n'est plus a page de verité, celle qui cotient la "donnée" c'est maintenant vuex et store donc les fonctions ici sont des mutations dorenavant
+
+    /*toggleDone (index) {
       this.tasks[index].done = !this.tasks[index].done
     },
 
@@ -139,10 +86,10 @@ export default {
 
     deleteTask (index) {
       this.tasks.splice(index, 1)
-    },
+    },*/
 
     goToEditPage (index) {
-      const task = this.tasks[index]
+      const task = this.$store.state.tasks[index]
       this.$router.push({
         name: 'task-edit',
         params: { index, taskData: task }
