@@ -1,14 +1,12 @@
 <template>
-    <div class="card " style="width: 13.75em; background-color: bisque;">
-        <div class="card-body">
-            <h5 class="card-header">Total des Taches</h5>
-            <!--p class="card-text">{{tasks.length}}</p-->
-            <p class="card-text">Compteur: {{totalTasks}}</p>
-            <p class="card-text">Compteur: {{$store.state.tasks}}</p>
-
-        </div>
-         
-    </div>
+    <q-card class="task-counter-card" >
+        <q-card-selection>
+            <div class="text-h6">Total des Taches</div>
+            <div class="text-h3 q-mt-sm">{{totalTasks}}</div>
+        </q-card-selection>
+        
+    </q-card>
+    
 </template>
 
 <script>
@@ -30,3 +28,13 @@
     };
 </script>
 
+<style scoped>
+    .task-counter-card{
+        width: 220px;
+        background: #fff3e0;
+        border-radius: 12px;
+    }
+    .q-mt-sm{
+        margin-left: 45%;
+    }
+</style>

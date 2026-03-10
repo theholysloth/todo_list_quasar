@@ -4,11 +4,11 @@
     <q-input dense input-class="text-right" class="q-ml-md bg-white text-dark"
       type="text"
       v-model="localSearch"
-      @input="$emit('search', localSearch)"
+      @input="updateSearch"
       placeholder="Rechercher une tâche...">
       <template v-slot:append>
         <q-icon v-if="localSearch === ''" name="search" />
-        <q-icon v-else name="clear" class="cursor-pointer" @click="localSearch = ''" />
+        <q-icon v-else name="clear" class="cursor-pointer" @click="clearSearch" />
       </template>
     </q-input>
   </q-toolbar>
@@ -37,7 +37,19 @@ export default {
     return {
       localSearch: ""
     };
-  }
+  }, 
+
+  methods: {
+    updateSearch(){
+      this.$store.dispatch('setSearch',this.localSearch)
+    }, 
+
+    clearSearch(){
+      this.localSearch = ""
+      this.$store.dispatch('setSearch',this.localSearch)
+
+    }
+  },
 };
 </script>
 

@@ -45,7 +45,8 @@ export default {
     // Propriétés envoyées par le router lors de l'edit
     nom: String, 
     task: String,
-    date: String
+    date: String,
+    done: Boolean
   },
 
   data() {
@@ -53,7 +54,8 @@ export default {
     // On initialise avec les props si elles existent
     localNom: this.nom || "",
     localTask: this.task || "",
-    localDate: this.date || ""
+    localDate: this.date || "",
+    localDone: this.done || false
     };
   },
 
@@ -68,7 +70,7 @@ export default {
         nom: this.localNom,
         task: this.localTask,
         date: this.localDate,
-        done:false
+        done: this.localDone
       };
 
       if (this.mode === "add") {
@@ -76,6 +78,13 @@ export default {
 
         //on peut directement commit la mutation grace à commit mais on va suivre les regles 
         this.$store.dispatch('addTask',payload);
+
+        this.$q.notify({
+          type:'positive', //les autres types : warning, negative, info 
+          message:'Tache Ajoutée!',
+          position:'top',//top-left, top-right,...
+          timeout: 1500
+        })
 
         // reset uniquement en mode ajout
 
@@ -86,6 +95,12 @@ export default {
         //this.$emit("update-task", { ...payload, index: this.index });
         
         this.$store.dispatch('updateTask',{...payload,index:this.index});
+
+        this.$q.notify({
+          type:'positive',
+          message:'Tache Modifiée!',
+          position:'top'
+        })
       }
     }
   }

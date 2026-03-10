@@ -13,7 +13,7 @@
         <q-td :props="props">
           <q-checkbox 
             :value="props.row.done" 
-            @input="$emit('toggle-done', tasks.indexOf(props.row))" 
+            @input="toggleDone(tasks.indexOf(props.row))"
           />
         </q-td>
       </template>
@@ -32,11 +32,14 @@
         </q-td>
       </template>
 
+      <!-- @click="$emit('delete-task', tasks.indexOf(props.row))" est remplacé car on accede directement aux données dans le store
+      sauf qu'on ne fait pas directement de dispatch danns le template. du coup ca sera dans une fonction qu'on appellera
+-->
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="q-gutter-xs">
           <q-btn 
             flat round dense color="negative" icon="delete" 
-            @click="$emit('delete-task', tasks.indexOf(props.row))" 
+            @click="deleteTask(tasks.indexOf(props.row))" 
           />
           <q-btn 
             flat round dense color="primary" icon="edit" 
@@ -49,11 +52,13 @@
 </template>
 
 <script>
+
+
 export default {
   name: "TaskList",
-  props: {
+  /*props: {
     search: String
-  },
+  },*/
   data() {
     return {
       columns: [
@@ -69,6 +74,9 @@ export default {
     tasks(){
       return this.$store.getters.tasks
     },
+    search(){
+      return this.$store.getters.search
+    },
     
     filteredTasks() {
       if (!this.search) return this.tasks;//le this.tasks vient maintenant du task obtenu dans computed 
@@ -76,6 +84,45 @@ export default {
       return this.tasks.filter(t => 
         t.nom.toLowerCase().includes(s) || t.task.toLowerCase().includes(s)
       );
+    }
+  },
+
+  methods:{
+    deleteTask(index){
+      this.$q.dialog({ //cette api permet d'eviter d'utiliser du template q-dialog et donc de gerer du v-model
+        title:'confirmation',
+        message: 'Cette decision est irreversible',
+        cancel: {
+          label:'Annuler',
+          color: 'primary'
+        },
+        ok : {
+          label:'supprimer',
+          color: 'negative'
+        },
+        icon: 'warning',
+        persistent: true
+      }).onOk(() =>{
+        this.$store.dispatch('deleteTask', index)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Tâche supprimée',
+          position: 'center'
+        })
+      })
+    },
+    toggleDone(index){
+      this.$store.dispatch('toggleDone', index)
+
+      const myTask = this.$store.getters.tasks[index] //on aurait pu faire this.$store.state.tasks[index]
+      if (myTask.done){
+        this.$q.notify({
+          type:'info',
+          message: 'Tache Terminée. BRAVO!!!',
+          position:'center',
+          timeout:28
+        })
+      }
     }
   }
 }
