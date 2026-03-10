@@ -36,26 +36,59 @@
       sauf qu'on ne fait pas directement de dispatch danns le template. du coup ca sera dans une fonction qu'on appellera
 -->
       <template v-slot:body-cell-actions="props">
-        <q-td :props="props" class="q-gutter-xs">
-          <q-btn 
-            flat round dense color="negative" icon="delete" 
-            @click="deleteTask(tasks.indexOf(props.row))" 
-          />
-          <q-btn 
-            flat round dense color="primary" icon="edit" 
-            @click="$emit('edit-task', tasks.indexOf(props.row))" 
+        <q-td :props="props">
+          <task-actions 
+          :task="props.row"
+          :index="tasks.indexOf(props.row)"
           />
         </q-td>
       </template>
     </q-table>
+
+    <q-dialog v-model="editDialog" persistent>
+      <q-card style="min-width: 400 px;" >
+        <q-card-section>
+          <div>Modifier la tache </div>
+        </q-card-section >
+          
+
+        <q-card-section class q-gutter-md>
+          <q-input 
+          v-model="editedTask.nom"
+          label="Chargé de la tache"
+          outlined/>
+
+          <q-input 
+          v-model="editedTask.task"
+          label="Tache à effectuer"
+          outlined/>
+
+          <q-input 
+          v-model="editedTask.date"
+          label="Date de rendu"
+          type=date
+          outlined/>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="annuler" color="primary" @click="closeEditDialog"></q-btn>
+          <q-btn flat label="Enregistrer" color="positive" @click="saveEditedTask"></q-btn>
+        </q-card-actions>
+        
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
+import { date } from 'quasar';
+import TaskActions from './TaskActions.vue';
+
 
 
 export default {
   name: "TaskList",
+  components : {TaskActions},
   /*props: {
     search: String
   },*/
@@ -67,7 +100,15 @@ export default {
         { name: 'task', label: 'Tâche', field: 'task', align: 'left' },
         { name: 'date', label: 'Date limite', field: 'date', align: 'left' },
         { name: 'actions', label: 'Actions', field: 'actions', align: 'center' }
-      ]
+      ],
+      editedIndex : null,
+      editDialog : false,
+      editedTask: {
+        nom: '', 
+        date: '', 
+        task: '', 
+        done: false
+      }
     }
   },
   computed: {
@@ -111,6 +152,7 @@ export default {
         })
       })
     },
+
     toggleDone(index){
       this.$store.dispatch('toggleDone', index)
 
@@ -123,8 +165,65 @@ export default {
           timeout:28
         })
       }
+    }, 
+
+    openEditDialog(task,index){
+      this.editedIndex = index, 
+      this.editedTask = {
+        nom : task.nom,
+        date: task.date,
+        task: task.task,
+        done: task.done
+      },
+      this.editDialog = true
+    }, 
+
+    
+    closeEditDialog(task,index){
+      this.editedIndex = null, 
+      this.editedTask = {
+        nom : '',
+        date: '',
+        task: '',
+        done: ''
+      },
+      this.editDialog = false
+    }, 
+
+    saveEditedTask(){
+      if(!this.editedTask.nom || !this.editedTask.task || !this.editedTask.date){
+        this.$q.notify({
+          type:'negative',
+          message: 'Veuillez entrer les champs requis svp !',
+          position: 'center'
+        })
+        return
+      }
+      this.$store.dispatch('updateTask', {
+        index: this.editedIndex,
+        nom:this.editedTask.nom,
+        date: this.editedTask.date,
+        task: this.editedTask.task
+      })
+      this.editDialog = false
+
+      this.$q.notify({
+        type:'positive',
+        message:'Tache modifiée avec succes !!',
+        position:'center'
+      })
+    }
+  },
+
+
+  provide() { //provide permet de mettre à disposition de ses enfants certaines variables,fonctions,...
+    return {
+      openEditDialog: this.openEditDialog, //
+      deleteTask : this.deleteTask
     }
   }
+
+
 }
 </script>
 

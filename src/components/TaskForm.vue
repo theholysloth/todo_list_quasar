@@ -79,7 +79,7 @@ export default {
         //on peut directement commit la mutation grace à commit mais on va suivre les regles 
         this.$store.dispatch('addTask',payload);
 
-        this.$q.notify({
+        this.$q.notify({//.$q.notify est une API offerte par quasar pour pouvoir implement de "l'html ou template" dans une methode
           type:'positive', //les autres types : warning, negative, info 
           message:'Tache Ajoutée!',
           position:'top',//top-left, top-right,...
