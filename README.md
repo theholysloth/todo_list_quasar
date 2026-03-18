@@ -1,6 +1,5 @@
 # Quasar App (todolist2)
 
-http://aide.hupso.co/fr/articles/12507754-ebp-comptabilite-on-vous-aide-a-resoudre-les-blocages-courants
 
 A Quasar Project
 
