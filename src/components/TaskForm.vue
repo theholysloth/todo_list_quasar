@@ -1,118 +1,120 @@
 <template>
-  <q-card dark bordered class="mt-3">
-    <q-card-selection>
+
+    <q-card class="my-card bg-secondary text-white">
+    <q-card-section>
         <div class="text-h6">Formulaire d'Ajout de Taches</div>
-    </q-card-selection>
+    </q-card-section>
 
     <q-separator dark inset />
 
     <q-card-section>
-        
-      <div class="container text-center" id="task-form">
-        <div class ="flex justify-center">
-          <div class="col-md-auto"><q-input rounded standout="bg-teal text-white" v-model="localNom" type="text" label="chargé de tâche" /></div>
+        <div class="contaienr text-center " id="task-form">
+            <div class="flex justify-center">
+                <div class="col-md-auto">
+                    <q-input rounded standout="text-white" v-model="localNom" type="text" label="Chargé de Tache"/>
+                </div>
+            </div>
+            <br>
+            <div class="flex justify-center">
+                <div class="col-md-auto">
+                    <q-input rounded standout="text-white" v-model="localTask" type="text" label="Description Tache"/>
+                </div>                
+            </div>
+            <br>
+            <div class="flex justify-center">
+                <div class="col-md-auto">
+                    <q-input v-model="localDate" type="date" label="date dû"/>
+                </div>
+            </div>
         </div>
         <br>
         <div class="flex justify-center">
-          <div class="col-md-auto"><q-input rounded standout v-model="localTask" type="text" label="Description Tache"/></div>
-        </div>
-        <br>
-        <div class="flex justify-center">
-          <div class="col-md-auto"><input v-model="localDate" type="date" label="date dû"/></div>
-        </div>
+            <q-btn align="around" class="btn-fixed-width" color="primary" icon="note_add" @click="submit">
+                {{ props.mode === 'add' ? 'Ajouter' : 'Modifier' }}
+            </q-btn>
       </div>
-      <br>
-      <div class="flex justify-center">
-        <q-btn align="around" class="btn-fixed-width" color="primary" icon="note_add" @click="submit">
-          {{ mode === 'add' ? 'Ajouter' : 'Modifier' }}
-        </q-btn>
-      </div>
-    </q-card-section>
-  </q-card>
+    </q-card-section>    
+    </q-card>
+
+    <!--dans tout le template, on ne doi jamais utiliser .value sur un ref (car ils sont automatiquement deballé dans les template)et sur les props y'en a pas-->
 </template>
 
+<script setup>
+
+import { useQuasar } from 'quasar'
+import {ref} from 'vue'
 
 
+const props = defineProps({ //du coup on peut maintenant acceder à chaque elt du props à l'aide de props.champ
+    mode: {type: String , default:'add'}, 
+    nom:String, 
+    task: String, 
+    date: String, 
+    id: Number
+})
 
+//defintion de data
+const localNom = ref(props.nom || '')
+const localTask = ref(props.task || '')
+const localDate = ref(props.date || '')
 
-<script>
-export default {
-  name: "TaskForm",
+///////////////////////////////
+const $q = useQuasar() //pour pouvoir utiliser notify 
+///////////////////////////////
 
-  props: {
-    mode: { type: String, default: 'add' },
-    index: Number,
-    // Propriétés envoyées par le router lors de l'edit
-    nom: String, 
-    task: String,
-    date: String,
-    done: Boolean
-  },
+//emits 
+const emit = defineEmits(['add-task', 'update-task','toggle-done','delete-task', 'edit-task']) //pareil que les props on peut l'appeler grace au nom 
 
-  data() {
-    return {
-    // On initialise avec les props si elles existent
-    localNom: this.nom || "",
-    localTask: this.task || "",
-    localDate: this.date || "",
-    localDone: this.done || false
-    };
-  },
+//methods 
+function submit(){
+    if (!localNom.value || !localDate.value || !localTask.value){
+        $q.notify({
+            type:'negative', 
+            message:'Veuillez remplir tous les champs !', 
+            position: 'center'
+        })
+        return; 
+    }
 
-  methods: {
-    submit() {
-      if (!this.localNom || !this.localTask || !this.localDate) {
-        alert("Veuillez remplir tous les champs !");
-        return;
-      }
+    const payload = {
+        nom:localNom.value,
+        task: localTask.value, 
+        date:localDate.value
+    }; 
 
-      const payload = {
-        nom: this.localNom,
-        task: this.localTask,
-        date: this.localDate,
-        done: this.localDone
-      };
+    if(props.mode === 'add'){
 
-      if (this.mode === "add") {
-        //this.$emit("add-task", payload); avec les store on n'emit plus ( on emit pour les donnée qui seront locale)
-
-        //on peut directement commit la mutation grace à commit mais on va suivre les regles 
-        this.$store.dispatch('addTask',payload);
-
-        this.$q.notify({//.$q.notify est une API offerte par quasar pour pouvoir implement de "l'html ou template" dans une methode
+        $q.notify({//.$q.notify est une API offerte par quasar pour pouvoir implement de "l'html ou template" dans une methode
           type:'positive', //les autres types : warning, negative, info 
           message:'Tache Ajoutée!',
           position:'top',//top-left, top-right,...
           timeout: 1500
         })
 
-        // reset uniquement en mode ajout
-
-        this.localNom = "";
-        this.localTask = "";
-        this.localDate = "";
-      } else {
-        //this.$emit("update-task", { ...payload, index: this.index });
+        emit('add-task',payload);//envoyer add-task aux parents qui vont appeller TaskForm; ILS POURRONT FAIRE @add-task=
+        localDate.value= '';
+        localNom.value = ''; 
+        localTask.value= ''
+    }else{
+        emit('update-task',{...payload,id:props.id}) //au payload, on ajoute le champ id
         
-        this.$store.dispatch('updateTask',{...payload,index:this.index});
-
-        this.$q.notify({
+        $q.notify({
           type:'positive',
           message:'Tache Modifiée!',
           position:'top'
         })
-      }
     }
-  }
-};
+}
+
 </script>
 
+
 <style>
-.mt-3 {
+.my-card {
     margin-top: 1rem !important;
     width: 75%;
-    margin-left: 15%;
-    margin-right: 15%;
+    margin-left: 17%;
+    margin-right: 17%;
     background-color: #ebebd3;
 }
 .text-h6{
@@ -120,5 +122,6 @@ export default {
   display:flex;
   justify-content: center;
 }
-</style>
 
+
+</style>

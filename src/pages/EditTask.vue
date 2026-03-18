@@ -2,24 +2,19 @@
   <q-page padding>
     <task-form
       :mode="mode"
-      :index="index"
       v-bind="taskData"
-      @update-task="$emit('update-task', $event)"
+      @update-task="emit('update-task', $event)"
     />
   </q-page>
 </template>
 
-<script>
+<script setup>
 import TaskForm from 'src/components/TaskForm.vue'
 
-export default {
-  name: 'PageEditTask',
-  components: { TaskForm },
+ defineProps({
+  mode: String,
+  taskData: Object
+})
 
-  props: {
-    mode: String,
-    index: Number,
-    taskData: Object
-  }
-}
+const emit = defineEmits(['update-task'])
 </script>

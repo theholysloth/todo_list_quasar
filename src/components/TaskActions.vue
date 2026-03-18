@@ -1,28 +1,36 @@
 <template>
-    <div class="q-gutter-xs">
-        <q-btn flat round dense color='negative' icon='delete' @click="deleteTask(index)" />
+  <div class="q-gutter-xs">
+    <q-btn
+      flat
+      round
+      dense
+      color="negative"
+      icon="delete"
+      @click="deleteTask(task.id)"
+    />
 
-        <q-btn flat round dense color='primary' icon='edit' @click="openEditDialog(task,index)" />
-
-    </div>
+    <q-btn
+      flat
+      round
+      dense
+      color="primary"
+      icon="edit"
+      @click="openEditDialog(task)"
+    />
+  </div>
 </template>
 
-<script>
-export default {
-    name: 'TaskActions',
+<script setup>
+import { inject, defineProps } from 'vue'
 
-    props: {
-        task: {
-            type: Object,
-            required: true
-        },
-        index:{
-            type:Number,
-            required: true
-        }
-    }, 
-    inject: ['openEditDialog', 'deleteTask'] //ces deux là sont des fonctions offertes par un parent (ici TaskList)
-}
+defineProps({
+  task: {
+    type: Object,
+    required: true
+  }
+})
 
+// on sécurise pour éviter les erreurs si jamais le parent disparaît
+const deleteTask = inject('deleteTask', () => {})
+const openEditDialog = inject('openEditDialog', () => {})
 </script>
-

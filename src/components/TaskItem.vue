@@ -1,20 +1,44 @@
-
 <template>
-  <q-page padding>
-    <!--on enleve l'ecouteur @delete-task="$emit('delete-task', $event)" car il n'y aura plus d'emit de fait dans TaskList
-    avant, quand on cliquait sur le bouton supprimé de tasklist, il envoyait un emit, qui etait relayé -->
-    <task-list
-      @edit-task="$emit('edit-task', $event)"
-    />
-  </q-page>
+  <tr :class="{done: props.task.done}">
+    <th scope="row">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="switchCheckDefault"
+        :checked="props.task.done"
+        @change="toggleDone"
+      >
+    </th>
+
+    <td><label class="form-check-label">{{ props.task.nom }}</label></td>
+    <td><label class="form-check-label">{{ props.task.task }}</label></td>
+    <td><label class="date">{{ props.task.date }}</label></td>
+
+    <td>
+      <task-actions :task="props.task" />
+    </td>
+  </tr>
 </template>
 
+<script setup>
+import TaskActions from './TaskActions.vue'
 
-<script>
-import TaskList from 'src/components/TaskList.vue'
+const props = defineProps({
+  task: Object,
+  id: Number
+})
 
-export default {
-  name: 'PageList',
-  components: { TaskList },
+const emit = defineEmits(['toggle-done'])
+
+function toggleDone() {
+  emit('toggle-done', props.id)
 }
 </script>
+
+<style>
+.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+</style>
