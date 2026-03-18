@@ -7,7 +7,7 @@
         class="q-ml-md bg-white text-dark"
         type="text"
         v-model="localSearch"
-        @input="updateSearch"
+        @update:model-value="updateSearch"
         placeholder="Rechercher une tâche..."
       >
         <template v-slot:append>

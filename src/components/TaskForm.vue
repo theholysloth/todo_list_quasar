@@ -8,31 +8,72 @@
     <q-separator dark inset />
 
     <q-card-section>
-        <div class="contaienr text-center " id="task-form">
-            <div class="flex justify-center">
-                <div class="col-md-auto">
-                    <q-input rounded standout="text-white" v-model="localNom" type="text" label="Chargé de Tache"/>
+        <q-form @submit.prevent="onSubmit">
+            <div class="contaienr text-center " id="task-form">
+                <div class="flex justify-center">
+                    <div class="col-md-auto">
+                        <q-input 
+                            rounded 
+                            standout="text-white" 
+                            v-model="nom" 
+                            label="Chargé de Tache"
+                            :error="!!nomError"
+                            :error-message="nomError"
+                            :blur="nomBlur"
+                        />
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="flex justify-center">
+                    <div class="col-md-auto">
+                        <q-input 
+                            rounded 
+                            standout="text-white" 
+                            v-model="task" 
+                            label="Description Tache"
+                            :error="!!taskError"
+                            :error-message="taskError"
+                            :blur="taskBlur"
+                        />
+                    </div>                
+                </div>
+
+                <br>
+                <div class="flex justify-center">
+                    <div class="col-md-auto">
+                        <q-input 
+                            v-model="date" 
+                            type="date" 
+                            label="date dû"
+                            :error="!!dateError"
+                            :error-message="dateError"
+                            :blur="dateBlur"
+                        />
+                    </div>
                 </div>
             </div>
             <br>
             <div class="flex justify-center">
-                <div class="col-md-auto">
-                    <q-input rounded standout="text-white" v-model="localTask" type="text" label="Description Tache"/>
-                </div>                
+                <q-btn 
+                align="around" 
+                class="btn-fixed-width" 
+                color="primary" 
+                icon="note_add"
+                type="submit"
+                >
+                    {{ props.mode === 'add' ? 'Ajouter' : 'Modifier' }}
+                </q-btn>
             </div>
-            <br>
-            <div class="flex justify-center">
-                <div class="col-md-auto">
-                    <q-input v-model="localDate" type="date" label="date dû"/>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="flex justify-center">
-            <q-btn align="around" class="btn-fixed-width" color="primary" icon="note_add" @click="submit">
-                {{ props.mode === 'add' ? 'Ajouter' : 'Modifier' }}
-            </q-btn>
-      </div>
+        </q-form> 
+
+
+
+        
+            
+            
+        
     </q-card-section>    
     </q-card>
 
@@ -42,21 +83,24 @@
 <script setup>
 
 import { useQuasar } from 'quasar'
-import {ref} from 'vue'
+import { useForm, useField } from "vee-validate"
+import * as yup from 'yup' 
 
 
 const props = defineProps({ //du coup on peut maintenant acceder à chaque elt du props à l'aide de props.champ
     mode: {type: String , default:'add'}, 
-    nom:String, 
-    task: String, 
-    date: String, 
+    initialNom:String, 
+    initialTask: String, 
+    initialDate: String, 
     id: Number
 })
 
 //defintion de data
-const localNom = ref(props.nom || '')
+/*const localNom = ref(props.nom || '')
 const localTask = ref(props.task || '')
-const localDate = ref(props.date || '')
+const localDate = ref(props.date || '')*/
+
+
 
 ///////////////////////////////
 const $q = useQuasar() //pour pouvoir utiliser notify 
@@ -65,25 +109,52 @@ const $q = useQuasar() //pour pouvoir utiliser notify
 //emits 
 const emit = defineEmits(['add-task', 'update-task','toggle-done','delete-task', 'edit-task']) //pareil que les props on peut l'appeler grace au nom 
 
-//methods 
-function submit(){
-    if (!localNom.value || !localDate.value || !localTask.value){
-        $q.notify({
-            type:'negative', 
-            message:'Veuillez remplir tous les champs !', 
-            position: 'center'
-        })
-        return; 
+
+const schema = yup.object({
+    nom : yup.string().trim().required("le nom est obligatoire ").min(2),
+    task: yup.string().required("la tache est obligatoire"),
+    date: yup.string().required()
+})
+
+const { resetForm, handleSubmit } = useForm({
+  validationSchema: schema, 
+
+  intialValues : {
+    nom: props.initialNom || '',
+    task: props.initialTask || '',
+    date : props.initialDate || ''
+  }
+})
+
+const {
+    value : nom, 
+    errorMessage : nomError, 
+    handleBlur: nomBlur
+} = useField('nom')
+
+const {
+    value : task, 
+    errorMessage : taskError, 
+    handleBlur: taskBlur
+} = useField('task')
+
+const {
+    value : date, 
+    errorMessage : dateError, 
+    handleBlur: dateBlur
+} = useField('date')
+
+
+const onSubmit = handleSubmit((values)=> {
+    const payload = {
+        nom:values.nom,
+        task: values.task, 
+        date:values.date
     }
 
-    const payload = {
-        nom:localNom.value,
-        task: localTask.value, 
-        date:localDate.value
-    }; 
-
     if(props.mode === 'add'){
-
+        emit('add-task',payload);//envoyer add-task aux parents qui vont appeller TaskForm; ILS POURRONT FAIRE @add-task=
+        
         $q.notify({//.$q.notify est une API offerte par quasar pour pouvoir implement de "l'html ou template" dans une methode
           type:'positive', //les autres types : warning, negative, info 
           message:'Tache Ajoutée!',
@@ -91,12 +162,22 @@ function submit(){
           timeout: 1500
         })
 
-        emit('add-task',payload);//envoyer add-task aux parents qui vont appeller TaskForm; ILS POURRONT FAIRE @add-task=
-        localDate.value= '';
+        resetForm({
+            values : {
+                nom : '', 
+                task : '', 
+                date : ''
+            }
+        })
+        
+        /*localDate.value= '';
         localNom.value = ''; 
-        localTask.value= ''
+        localTask.value= ''*/
     }else{
-        emit('update-task',{...payload,id:props.id}) //au payload, on ajoute le champ id
+        emit('update-task',
+            {...payload,
+                id:props.id
+            }) //au payload, on ajoute le champ id
         
         $q.notify({
           type:'positive',
@@ -104,7 +185,16 @@ function submit(){
           position:'top'
         })
     }
-}
+}, () => {
+    $q.notify({
+        type: 'negative', 
+        message : 'Veuillez corriger les champs du formulaire', 
+        position : 'center'
+    })
+})
+
+//methods 
+
 
 </script>
 
