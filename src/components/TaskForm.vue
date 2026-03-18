@@ -8,7 +8,8 @@
     <q-separator dark inset />
 
     <q-card-section>
-        <q-form @submit.prevent="onSubmit">
+        <q-form @submit.prevent="onSubmit"> <!--prevent permet d'empecher le comportement par defaut des submit. car en html, submit recharge la page ou va vers la page indiquée dans action=""
+        ce qui interrompt le javascript et donc onSubmit ne s'execute meme pas sans prevent -->
             <div class="contaienr text-center " id="task-form">
                 <div class="flex justify-center">
                     <div class="col-md-auto">
@@ -19,7 +20,7 @@
                             label="Chargé de Tache"
                             :error="!!nomError"
                             :error-message="nomError"
-                            :blur="nomBlur"
+                            @blur="nomBlur"
                         />
                     </div>
                 </div>
@@ -35,7 +36,7 @@
                             label="Description Tache"
                             :error="!!taskError"
                             :error-message="taskError"
-                            :blur="taskBlur"
+                            @blur="taskBlur"
                         />
                     </div>                
                 </div>
@@ -49,7 +50,7 @@
                             label="date dû"
                             :error="!!dateError"
                             :error-message="dateError"
-                            :blur="dateBlur"
+                            @blur="dateBlur"
                         />
                     </div>
                 </div>
@@ -79,8 +80,12 @@
 
     <!--dans tout le template, on ne doi jamais utiliser .value sur un ref (car ils sont automatiquement deballé dans les template)et sur les props y'en a pas-->
 </template>
+<!--    : on bind une props 
+        @ on ecoute un event -->
+
 
 <script setup>
+//les elts definies dans cript setup sont directement accessible dans le template
 
 import { useQuasar } from 'quasar'
 import { useForm, useField } from "vee-validate"
@@ -93,7 +98,7 @@ const props = defineProps({ //du coup on peut maintenant acceder à chaque elt d
     initialTask: String, 
     initialDate: String, 
     id: Number
-})
+})//le pere pourra appeller : <taskform :initial=variable_nom mode= unmode...> 
 
 //defintion de data
 /*const localNom = ref(props.nom || '')
@@ -103,25 +108,32 @@ const localDate = ref(props.date || '')*/
 
 
 ///////////////////////////////
-const $q = useQuasar() //pour pouvoir utiliser notify 
+const $q = useQuasar() //useQuasar permet d'acceder à l'api quasar offrant pleins de fonctionnalités notify, dialog, dark
+
+//useQuasar est un example de composable(comme useForm et useField). un composable donne acces à une logique/code reutilisable 
 ///////////////////////////////
 
 //emits 
-const emit = defineEmits(['add-task', 'update-task','toggle-done','delete-task', 'edit-task']) //pareil que les props on peut l'appeler grace au nom 
+const emit = defineEmits(['add-task', 'update-task']) //pareil que les props on peut l'appeler grace au nom 
+//permettent d'envoyer des infos au parent. emit('add-task',payload) . le pere recevra le "event" add-atsk:payload grace à @add-task="fonction" la fonction pourra use le payload
 
+const schema = yup.object({//un schema est une description des regles (d'un formulaire)
 
-const schema = yup.object({
-    nom : yup.string().trim().required("le nom est obligatoire ").min(2),
+//cela permet de separer la politique devalidation du submit(qui est la politique de soumission)
+
+    nom : yup.string().trim().required("le nom est obligatoire ").min(2),//trim supprimes les espaces au debut et à la fin
     task: yup.string().required("la tache est obligatoire"),
     date: yup.string().required()
 })
 
-const { resetForm, handleSubmit } = useForm({
-  validationSchema: schema, 
+const {/*errors*/ resetForm, handleSubmit } = useForm({//useForm est le coeur du vee-validate. il cree un contexte de formulaire(espace qui stock les valeurs du formulaire, les erreurs, l'etat)
+//il applique le schema yup , gere reset , la soumission et les valeurs initiales.
 
-  intialValues : {
+  validationSchema: schema, //gestion de la validation grace à validationSchema et handleSubmit s'occupe de la soumission
+
+  initialValues : {
     nom: props.initialNom || '',
-    task: props.initialTask || '',
+    task: props.initialTask || '',//soit '' soit des valeurs offertes par le pere via les props 
     date : props.initialDate || ''
   }
 })
@@ -129,8 +141,11 @@ const { resetForm, handleSubmit } = useForm({
 const {
     value : nom, 
     errorMessage : nomError, 
-    handleBlur: nomBlur
-} = useField('nom')
+    handleBlur: nomBlur //la fonction à appeller quand le champ perd le focus
+} = useField('nom') //les useFields sont des capteurs individuelles pour chaque champ du formulaire , il va de paire avec useForm
+//il cree un champ de formulaire nommé grace à value.
+
+//il n'est pas trop conseiller de faire : const {value} = defineField('nom') car si on le fait, on aura plusieurs variable value , donc conflit 
 
 const {
     value : task, 
@@ -145,7 +160,7 @@ const {
 } = useField('date')
 
 
-const onSubmit = handleSubmit((values)=> {
+const onSubmit = handleSubmit((values)=> {//dans handleSubmit on a les valeur entré dans le formulaire grace à values
     const payload = {
         nom:values.nom,
         task: values.task, 
