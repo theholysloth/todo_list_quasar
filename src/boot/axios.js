@@ -1,4 +1,12 @@
-import Vue from 'vue'
-import axios from 'axios'
+import { boot } from "quasar/wrappers";
+import axios from "axios";
 
-Vue.prototype.$axios = axios
+const api = axios.create({
+    baseURL: 'http://localhost:8000/api'
+})
+
+export default boot(({app})=>{
+    app.config.globalProperties.$api = api
+})
+
+export{api}
