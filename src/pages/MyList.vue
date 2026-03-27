@@ -31,17 +31,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import TaskList from 'src/components/TaskList.vue'
 import TaskFilter from 'src/components/TaskFilter.vue'
 import MySearch from 'src/components/MySearch.vue'
 import TaskForm from 'src/components/TaskForm.vue'
 import { useTasksStore } from 'src/stores/tasks'
+import { onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 
-const $q = useQuasar()
+
 const tasksStore = useTasksStore()
-const dialogAdd = ref(false)
+const $q = useQuasar()
+//tasksStore.loadTasks()
 
 onMounted(async () => {
   try {
@@ -55,8 +57,11 @@ onMounted(async () => {
   }
 })
 
-async function handleAddTask(payload) {
-  try {
+const dialogAdd = ref(false)
+
+async function handleAddTask(payload) { //await tasksStore.createTask(payload)
+
+ try {
     await tasksStore.ADD_TASK({
       ...payload,
       done: false
@@ -75,4 +80,6 @@ async function handleAddTask(payload) {
 function openAddDialog() {
   dialogAdd.value = true
 }
+
+
 </script>

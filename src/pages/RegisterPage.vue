@@ -88,8 +88,9 @@ async function handleRegister() {
       message: 'Inscription réussie'
     })
 
-    router.push('/tasks')
+    router.push('/list')
   } catch (error) {
+    
     console.error(error)
 
     const errors = error?.response?.data?.errors

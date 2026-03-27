@@ -71,7 +71,7 @@ async function handleLogin() {
       message: 'Connexion réussie'
     })
 
-    router.push('/tasks')
+    router.push('/list')
   } catch (error) {
     console.error(error)
 
