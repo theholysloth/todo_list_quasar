@@ -31,36 +31,48 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TaskList from 'src/components/TaskList.vue'
 import TaskFilter from 'src/components/TaskFilter.vue'
 import MySearch from 'src/components/MySearch.vue'
 import TaskForm from 'src/components/TaskForm.vue'
 import { useTasksStore } from 'src/stores/tasks'
-import { onMounted } from 'vue'
+import { useQuasar } from 'quasar'
 
-
+const $q = useQuasar()
 const tasksStore = useTasksStore()
-//tasksStore.loadTasks()
-
-onMounted(()=> {
-  tasksStore.loadTasks()
-})
-
 const dialogAdd = ref(false)
 
-function handleAddTask(payload) { //await tasksStore.createTask(payload)
+onMounted(async () => {
+  try {
+    await tasksStore.loadTasks()
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Impossible de charger les tâches'
+    })
+    console.error(error)
+  }
+})
 
-  tasksStore.ADD_TASK({
-    ...payload,
-    id: Date.now(),
-    done: false
-  })
-  dialogAdd.value = false
+async function handleAddTask(payload) {
+  try {
+    await tasksStore.ADD_TASK({
+      ...payload,
+      done: false
+    })
+
+    dialogAdd.value = false
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors de l’ajout de la tâche'
+    })
+    console.error(error)
+  }
 }
+
 function openAddDialog() {
   dialogAdd.value = true
 }
-
-
 </script>
