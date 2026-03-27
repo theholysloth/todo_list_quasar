@@ -37,14 +37,20 @@ import TaskFilter from 'src/components/TaskFilter.vue'
 import MySearch from 'src/components/MySearch.vue'
 import TaskForm from 'src/components/TaskForm.vue'
 import { useTasksStore } from 'src/stores/tasks'
+import { onMounted } from 'vue'
+
 
 const tasksStore = useTasksStore()
-tasksStore.loadTasks()
+//tasksStore.loadTasks()
 
+onMounted(()=> {
+  tasksStore.loadTasks()
+})
 
 const dialogAdd = ref(false)
 
-function handleAddTask(payload) {
+function handleAddTask(payload) { //await tasksStore.createTask(payload)
+
   tasksStore.ADD_TASK({
     ...payload,
     id: Date.now(),
