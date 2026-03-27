@@ -25,7 +25,6 @@
           v-for="t in filteredTasks"
           :key="t.id"
           :task="t"
-          :id="t.id"
           @toggle-done="toggleDone"
         />
       </tbody>
@@ -93,7 +92,10 @@ const separatorOptions = [
 // filtrage , on la met en computed car cette variable/fonction depend de tasks, search et filter qui sont reactive
 const filteredTasks = computed(() => {
   const searchValue = (search.value || '').toLowerCase()
-  let list = tasks.value || []
+  let list = Array.isArray(tasks.value) ? tasks.value : []
+
+  // On filtre d'abord les éléments invalides
+  list = list.filter(t => t && typeof t === 'object')
 
   if (filter.value === 'done') {
     list = list.filter(t => t.done)
@@ -101,11 +103,13 @@ const filteredTasks = computed(() => {
     list = list.filter(t => !t.done)
   }
 
-  return list.filter(t =>
-    (t.nom || '').toLowerCase().includes(searchValue) ||
-    (t.task || '').toLowerCase().includes(searchValue)
-  )
+  return list.filter(t => {
+    const nom = (t.nom || '').toLowerCase()
+    const task = (t.task || '').toLowerCase()
+    return nom.includes(searchValue) || task.includes(searchValue)
+  })
 })
+
 
 
 async function deleteTask(taskId) {

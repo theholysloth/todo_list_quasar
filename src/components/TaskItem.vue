@@ -26,7 +26,7 @@ import TaskActions from './TaskActions.vue'
 
 const props = defineProps({
   task: Object,
-  id: Number
+  //id: [String, Number] //c'est laravel qui va renvoyer l'uuid
 })
 
 const emit = defineEmits(['toggle-done'])

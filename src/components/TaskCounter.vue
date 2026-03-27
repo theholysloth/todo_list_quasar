@@ -17,6 +17,7 @@ const tasksStore = useTasksStore()
 
 // Getter Pinia
 const totalTasks = computed(() => tasksStore.totalTasks) //plus de this.$store 
+//on rend reactif la variable totalTasks
 </script>
 
 <style scoped>

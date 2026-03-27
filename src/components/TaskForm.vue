@@ -96,7 +96,8 @@ const props = defineProps({ //du coup on peut maintenant acceder à chaque elt d
     mode: {type: String , default:'add'}, 
     initialNom:String, 
     initialTask: String, 
-    initialDate: String, 
+    initialDate: String,
+    initialDone: Boolean,
     id: Number
 })//le pere pourra appeller : <taskform :initial=variable_nom mode= unmode...> 
 
