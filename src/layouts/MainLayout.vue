@@ -6,7 +6,9 @@
 
         <q-toolbar-title> Quasar App </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-btn label ='logout' color="negative" @click="handleLogOut"/>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -36,10 +38,20 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { useAuthStore } from 'src/stores/auth';
 
 const leftDrawerOpen = ref(false)
 
+const router = useRouter()
+const authStore = useAuthStore()
+
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+async function handleLogOut(){
+  await authStore.logout()
+  router.push('/login')
 }
 </script>
