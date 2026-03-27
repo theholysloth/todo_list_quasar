@@ -164,7 +164,8 @@ const onSubmit = handleSubmit((values)=> {//dans handleSubmit on a les valeur en
     const payload = {
         nom:values.nom,
         task: values.task, 
-        date:values.date
+        date:values.date,
+        done: props.mode === 'edit' ? props.initialDone : false
     }
 
     if(props.mode === 'add'){

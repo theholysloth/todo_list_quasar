@@ -31,8 +31,10 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle-done'])
 
-function toggleDone() {
-  emit('toggle-done', props.id)
+function toggleDone() { //pour prevenir TaskList que la checkbox a été modifiée (taskItem ne modifie pas directement le store)
+  //le parent le capte avec @toggle-done et y effectue ces action via une fonction du meme nom 
+  emit('toggle-done', props.task.id)
+
 }
 </script>
 

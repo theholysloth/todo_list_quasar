@@ -26,7 +26,7 @@
           :key="t.id"
           :task="t"
           :id="t.id"
-          @toggle-done="toggleDone(t.id)"
+          @toggle-done="toggleDone"
         />
       </tbody>
     </q-markup-table>
@@ -62,7 +62,8 @@ import TaskItem from './TaskItem.vue'
 import TaskCounter from './TaskCounter.vue'
 
 const $q = useQuasar()
-const taskStore = useTasksStore()
+const taskStore = useTasksStore()//connection au store grace au composable
+//on a donc acces au store grace à taskStore....
 
 // état dialog + tâche en cours d’édition (comme avant)
 const editDialog = ref(false)
@@ -74,10 +75,12 @@ const editedTask = ref({
   done: false
 })
 
-// données Pinia
+// données Pinia. on cree des valeurs reactives basé sur taskstore ainsi des qu'il y'aura une modif , les variables le seront aussi
+//d'ou l'utilité de computed
 const tasks = computed(() => taskStore.tasks)
 const search = computed(() => taskStore.search)
 const filter = computed(() => taskStore.getFilter)
+
 
 // Option group Quasar
 const separator = ref('horizontal')
@@ -87,7 +90,7 @@ const separatorOptions = [
   { label: 'Cell', value: 'cell' }
 ]
 
-// filtrage (proche de ton ancien)
+// filtrage , on la met en computed car cette variable/fonction depend de tasks, search et filter qui sont reactive
 const filteredTasks = computed(() => {
   const searchValue = (search.value || '').toLowerCase()
   let list = tasks.value || []
@@ -104,9 +107,8 @@ const filteredTasks = computed(() => {
   )
 })
 
-// ====== vraies fonctions (comme dans ton ancien TaskList) ======
 
-function deleteTask(taskId) {
+async function deleteTask(taskId) {
   $q.dialog({
     title: 'Confirmation',
     message: 'Cette décision est irréversible',
@@ -120,8 +122,8 @@ function deleteTask(taskId) {
     },
     icon: 'warning',
     persistent: true
-  }).onOk(() => {
-    taskStore.DELETE_TASK(taskId)
+  }).onOk(async() => {
+    await taskStore.DELETE_TASK(taskId)//action pour modifier le state
     $q.notify({
       type: 'negative',
       message: 'Tâche supprimée',
@@ -130,10 +132,10 @@ function deleteTask(taskId) {
   })
 }
 
-function toggleDone(taskId) {
-  taskStore.TOGGLE_DONE(taskId)
+async function toggleDone(taskId) {
+  await taskStore.TOGGLE_DONE(taskId)
 
-  const myTask = taskStore.getTaskById(taskId)
+  const myTask = taskStore.getTaskById(taskId)//getter
   if (myTask && myTask.done) {
     $q.notify({
       type: 'info',
@@ -144,7 +146,7 @@ function toggleDone(taskId) {
   }
 }
 
-function openEditDialog(task) {
+function openEditDialog(task) {//important car avant d'enregistrer dans le store , on fera des verification dans saveEditedTask
   editedTask.value = {
     id: task.id,
     nom: task.nom,
@@ -166,7 +168,7 @@ function closeEditDialog() {
   editDialog.value = false
 }
 
-function saveEditedTask() {
+async function saveEditedTask() {
   const t = editedTask.value
 
   if (!t.nom || !t.task || !t.date) {
@@ -178,7 +180,7 @@ function saveEditedTask() {
     return
   }
 
-  taskStore.UPDATE_TASK(t)
+  await taskStore.UPDATE_TASK(t)//action
 
   editDialog.value = false
 
@@ -189,7 +191,7 @@ function saveEditedTask() {
   })
 }
 
-// provide des vraies fonctions (comme avant)
+//on met a disposition des enfants de taskList les fonctions deleteTask et openEditDialog
 provide('deleteTask', deleteTask)
 provide('openEditDialog', openEditDialog)
 </script>
