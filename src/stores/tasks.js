@@ -126,6 +126,7 @@ export const useTasksStore = defineStore('tasks', { //defineStore permet de cree
     },*/
 
     async TOGGLE_DONE(taskId){
+        if (!taskId) return console.warn("toggleDone called with undefined ID")
       const task = this.tasks.find(t => t.id === taskId)
       if (!task) return 
       const updatedTask = {
