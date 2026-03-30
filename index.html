@@ -22,3 +22,154 @@
     <!-- quasar:entry-point -->
   </body>
 </html>
+
+
+
+Uncaught (in promise) AxiosError: Request failed with status code 500
+    at settle (settle.js:20:7)
+    at XMLHttpRequest.onloadend (xhr.js:62:9)
+    at Axios.request (Axios.js:46:41)
+    at async Proxy.TOGGLE_DONE (tasks.js:135:24)
+    at async toggleDone (TaskList.vue:140:3)
+settle @ settle.js:20
+onloadend @ xhr.js:62
+XMLHttpRequest.send
+dispatchXhrRequest @ xhr.js:220
+xhr @ xhr.js:16
+dispatchRequest @ dispatchRequest.js:48
+Promise.then
+_request @ Axios.js:180
+request @ Axios.js:41
+httpMethod @ Axios.js:243
+wrap @ bind.js:12
+TOGGLE_DONE @ tasks.js:135
+wrappedAction @ pinia.mjs:1400
+store.<computed> @ pinia.mjs:955
+toggleDone @ TaskList.vue:140
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+emit @ runtime-core.esm-bundler.js:4433
+(anonymous) @ runtime-core.esm-bundler.js:8285
+toggleDone @ TaskItem.vue:36
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+invoker @ runtime-dom.esm-bundler.js:730
+tasks.js:135  PUT http://localhost:8000/api/tasks/019d3f26-a401-707c-81bc-50d987be226a 500 (Internal Server Error)
+dispatchXhrRequest @ xhr.js:220
+xhr @ xhr.js:16
+dispatchRequest @ dispatchRequest.js:48
+Promise.then
+_request @ Axios.js:180
+request @ Axios.js:41
+httpMethod @ Axios.js:243
+wrap @ bind.js:12
+TOGGLE_DONE @ tasks.js:135
+wrappedAction @ pinia.mjs:1400
+store.<computed> @ pinia.mjs:955
+toggleDone @ TaskList.vue:140
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+emit @ runtime-core.esm-bundler.js:4433
+(anonymous) @ runtime-core.esm-bundler.js:8285
+toggleDone @ TaskItem.vue:36
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+invoker @ runtime-dom.esm-bundler.js:730
+tasks.js:135  PUT http://localhost:8000/api/tasks/019d3f26-a401-707c-81bc-50d987be226a 500 (Internal Server Error)
+dispatchXhrRequest @ xhr.js:220
+xhr @ xhr.js:16
+dispatchRequest @ dispatchRequest.js:48
+Promise.then
+_request @ Axios.js:180
+request @ Axios.js:41
+httpMethod @ Axios.js:243
+wrap @ bind.js:12
+TOGGLE_DONE @ tasks.js:135
+wrappedAction @ pinia.mjs:1400
+store.<computed> @ pinia.mjs:955
+toggleDone @ TaskList.vue:140
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+emit @ runtime-core.esm-bundler.js:4433
+(anonymous) @ runtime-core.esm-bundler.js:8285
+toggleDone @ TaskItem.vue:36
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+invoker @ runtime-dom.esm-bundler.js:730
+TaskItem.vue:36 [Vue warn]: Unhandled error during execution of component event handler 
+  at <TaskItem key="019d3f26-a401-707c-81bc-50d987be226a" task= {id: '019d3f26-a401-707c-81bc-50d987be226a', nom: 'dtuidi', task: 'sdtyusdtyu', date: '2026-03-18', done: 0} onToggleDone=fn<toggleDone> > 
+  at <QMarkupTable separator="horizontal" flat="" bordered="" > 
+  at <TaskList> 
+  at <QPage padding="" > 
+  at <MyList onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) {__v_skip: true} > > 
+  at <RouterView> 
+  at <QPageContainer> 
+  at <QLayout view="lHh Lpr lFf" > 
+  at <MainLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) {__v_skip: true} > > 
+  at <RouterView> 
+  at <App>
+warn$1 @ runtime-core.esm-bundler.js:51
+logError @ runtime-core.esm-bundler.js:263
+handleError @ runtime-core.esm-bundler.js:255
+(anonymous) @ runtime-core.esm-bundler.js:209
+Promise.catch
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:208
+emit @ runtime-core.esm-bundler.js:4433
+(anonymous) @ runtime-core.esm-bundler.js:8285
+toggleDone @ TaskItem.vue:36
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+invoker @ runtime-dom.esm-bundler.js:730
+TaskItem.vue:36 [Vue warn]: Unhandled error during execution of component event handler 
+  at <TaskItem key="019d3f26-a401-707c-81bc-50d987be226a" task= {id: '019d3f26-a401-707c-81bc-50d987be226a', nom: 'dtuidi', task: 'sdtyusdtyu', date: '2026-03-18', done: 0} onToggleDone=fn<toggleDone> > 
+  at <QMarkupTable separator="horizontal" flat="" bordered="" > 
+  at <TaskList> 
+  at <QPage padding="" > 
+  at <MyList onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) {__v_skip: true} > > 
+  at <RouterView> 
+  at <QPageContainer> 
+  at <QLayout view="lHh Lpr lFf" > 
+  at <MainLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) {__v_skip: true} > > 
+  at <RouterView> 
+  at <App>
+warn$1 @ runtime-core.esm-bundler.js:51
+logError @ runtime-core.esm-bundler.js:263
+handleError @ runtime-core.esm-bundler.js:255
+(anonymous) @ runtime-core.esm-bundler.js:209
+Promise.catch
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:208
+emit @ runtime-core.esm-bundler.js:4433
+(anonymous) @ runtime-core.esm-bundler.js:8285
+toggleDone @ TaskItem.vue:36
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+invoker @ runtime-dom.esm-bundler.js:730
+2settle.js:20 Uncaught (in promise) AxiosError: Request failed with status code 500
+    at settle (settle.js:20:7)
+    at XMLHttpRequest.onloadend (xhr.js:62:9)
+    at Axios.request (Axios.js:46:41)
+    at async Proxy.TOGGLE_DONE (tasks.js:135:24)
+    at async toggleDone (TaskList.vue:140:3)
+settle @ settle.js:20
+onloadend @ xhr.js:62
+XMLHttpRequest.send
+dispatchXhrRequest @ xhr.js:220
+xhr @ xhr.js:16
+dispatchRequest @ dispatchRequest.js:48
+Promise.then
+_request @ Axios.js:180
+request @ Axios.js:41
+httpMethod @ Axios.js:243
+wrap @ bind.js:12
+TOGGLE_DONE @ tasks.js:135
+wrappedAction @ pinia.mjs:1400
+store.<computed> @ pinia.mjs:955
+toggleDone @ TaskList.vue:140
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+emit @ runtime-core.esm-bundler.js:4433
+(anonymous) @ runtime-core.esm-bundler.js:8285
+toggleDone @ TaskItem.vue:36
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+callWithAsyncErrorHandling @ runtime-core.esm-bundler.js:206
+invoker @ runtime-dom.esm-bundler.js:730
