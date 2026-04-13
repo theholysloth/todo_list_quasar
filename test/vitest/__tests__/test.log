@@ -1,0 +1,54 @@
+describe('Redirection si non connecté', () => {
+  it('redirige vers /login', () => {
+    cy.visit('/#/'); // ne pas s'arreter au 403 forbidden 
+
+    cy.url().should('include', '/login');// gerer la redirection vers le login
+    cy.contains('Connexion').should('exist'); // conexion est un texte de la page formulaire 
+  });
+});
+
+
+Running:  home.cy.js                                                                      (1 of 1)
+
+
+  Redirection si non connecté
+    1) redirige vers /login
+
+
+  0 passing (536ms)
+  1 failing
+
+  1) Redirection si non connecté
+       redirige vers /login:
+     CypressError: `cy.visit()` failed trying to load:
+
+http://quasar:9000/
+
+The `content-type` of the response we received from your web server was:
+
+  > `text/plain`
+
+This was considered a failure because responses must have `content-type: 'text/html'`
+
+However, you can likely use `cy.request()` instead of `cy.visit()`.
+
+`cy.request()` will automatically get and set cookies and enable you to parse responses.
+
+docker compose exec -it quasar sh (dans le container quasar)
+WARN[0000] intro_quasar1/quasarV2/docker-compose.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+# curl -I http://quasar:9000
+HTTP/1.1 403 Forbidden
+Access-Control-Allow-Origin: *
+Content-Type: text/plain
+Date: Mon, 13 Apr 2026 11:46:46 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+dans le container cypress
+curl -I http://quasar:9000 
+HTTP/1.1 403 Forbidden
+Vary: Origin
+Content-Type: text/plain
+Date: Mon, 13 Apr 2026 09:25:34 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
