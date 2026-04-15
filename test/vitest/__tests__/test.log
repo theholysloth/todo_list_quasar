@@ -1,121 +1,27 @@
-Redirection si non connecté
-    ✓ redirige vers /login (1247ms)
-
-  Page d’accueil
-    ✓ charge correctement quand on est connecté (704ms)
-
-  Formulaire de connexion
-    ✓ affiche email et mot de passe (619ms)
-    1) affiche une erreur si les champs sont vides
-    ✓ refus mauvais login (1292ms)
-    2) accepte login et redirige
-
-  Inscription
-    ✓ affiche tous les champs (396ms)
-    3) inscription reussie
-
-
-  5 passing (21s)
-  3 failing
-
-  1) Formulaire de connexion
-       affiche une erreur si les champs sont vides:
-     AssertionError: Timed out retrying after 4000ms: Expected to find content: 'Mot de passe requis' but never did.
-      at Context.eval (webpack://todolist2/./cypress/e2e/home.cy.js:36:39)
-
-  2) Formulaire de connexion
-       accepte login et redirige:
-     AssertionError: Timed out retrying after 4000ms: expected 'http://quasar:9000/#/login' to include '/#/list'
-      at Context.eval (webpack://todolist2/./cypress/e2e/home.cy.js:52:13)
-
-  3) Inscription
-       inscription reussie:
-     AssertionError: Timed out retrying after 4000ms: expected 'http://quasar:9000/#/register' to include '/#/list'
-      at Context.eval (webpack://todolist2/./cypress/e2e/home.cy.js:80:13)
-
-
-describe('Redirection si non connecté', () => {
-  it('redirige vers /login', () => {
-    cy.visit('/#/'); // ne pas s'arreter au 403 forbidden 
-
-    cy.url().should('include', '/login');// gerer la redirection vers le login
-    cy.contains('Connexion').should('exist'); // conexion est un texte de la page formulaire 
-  });
-});
-
-
-describe('Page d’accueil', () => {
-  beforeEach(() => {
-    window.localStorage.setItem('token', 'fake-token');
-  });
-
-  it('charge correctement quand on est connecté', () => {
-    cy.visit('/');
-    cy.contains('Quasar').should('exist');
-  });
-});
-
-describe('Formulaire de connexion', () => {
-  beforeEach(() => {
-    cy.visit('/#/login');
-  });
-
-  it('affiche email et mot de passe', () => {
-    cy.get('input[type="email"]').should('exist');
-    cy.get('input[type="password"]').should('exist');
-  });
-
-  it('affiche une erreur si les champs sont vides', () => {
-    cy.contains('.q-btn', 'Se connecter').click();
-
-    cy.contains('Email requis').should('exist');
-    cy.contains('Mot de passe requis').should('exist');
-  });
-
-  it('refus mauvais login', () => {
-    cy.get('input[type="email"]').type('fake@test.com');
-    cy.get('input[type="password"]').type('wrongpass');
-    cy.contains('.q-btn', 'Se connecter').click();
-
-    cy.contains('Identifiants incorrects').should('exist');
-  });
-
-  it('accepte login et redirige', () => {
-    cy.get('input[type="email"]').type('superadmin@example.com');
-    cy.get('input[type="password"]').type('superadmin123');
-    cy.contains('.q-btn', 'Se connecter').click();
-
-    cy.url().should('include', '/#/list');
-    //cy.contains('taches').should('exist'); 
-
-  });
-});
-
-
-describe('Inscription', () => {
-  beforeEach(() => {
-    cy.visit('/#/register')
-  })
-
-  it('affiche tous les champs', () => {
-    cy.contains('Inscription').should('exist')
-
-    cy.contains('Nom').should('exist')
-    cy.contains('Email').should('exist')
-    cy.contains('Mot de passe').should('exist')
-    cy.contains('Confirmation du mot de passe').should('exist')
-  })
-
-  it('inscription reussie', () => {
-    cy.get('.q-input input').eq(0).type('Test')              
-    cy.get('.q-input input').eq(1).type('blabla@example.com')       
-    cy.get('.q-input input').eq(2).type('password123')             
-    cy.get('.q-input input').eq(3).type('password123')
-
-    cy.contains('.q-btn', 'Créer le compte').click()
-    cy.url().should('include', '/#/list');
-    //cy.contains('confirmation').should('exist') // message Laravel
-  })
-
-  
-})
+si je suis sur windows, jutilise bash pour tester mon code et surtout je travaille avec quasar+laravel
+$ /build/build.sh
+/build/build.sh : Le terme �/build/build.sh� n'est pas reconnu comme nom d'applet de commande, fonction, fichier de 
+script ou programme ex�cutable. V�rifiez l'orthographe du nom, ou si un chemin d'acc�s existe, v�rifiez que le chemin 
+d'acc�s est correct et r�essayez.
+Au caract�re Ligne:1 : 1
++ /build/build.sh
++ ~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (/build/build.sh:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+Uploading artifacts for failed job
+00:01
+Version:      18.10.1
+Git revision: 3b43bf9f
+Git branch:   18-10-stable
+GO version:   go1.25.7 X:cacheprog
+Built:        2026-04-05T13:53:20Z
+OS/Arch:      windows/amd64
+Uploading artifacts...
+Runtime platform                                    arch=amd64 os=windows pid=7292 revision=3b43bf9f version=18.10.1
+WARNING: gl-auto-build-variables.env: no matching files. Ensure that the artifact path is relative to the working directory (C:\GitLab-Runner\builds\ECwrUQWsp\0\todolist\todolist_front) 
+ERROR: No files to upload                          
+Cleaning up project directory and file based variables
+00:01
+ERROR: Job failed: exit status 1
+j'ai creer 2 runner gitlab pour mon projet mais aucun ne fonctionne 
