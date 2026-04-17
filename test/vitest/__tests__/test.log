@@ -32,47 +32,18 @@ build_front:
   needs:
     - install_front
 
-stages:
-  - install
-  - build
-  - test
-
-variables:
-  NODE_ENV: production
-
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/
-
-install_front:
-  stage: install
-  image: node:20
-  script:
-    - npm install
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1h
-
-build_front:
-  stage: build
-  image: node:20
-  script:
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
-    expire_in: 1 week
-  needs:
-    - install_front
-
 test:unit:
+  stage: test
   image: node:20
   script:
     - npm run test:unit
+  needs:
+    - install_front
 
 test:e2e:
+  stage: test
   image: cypress/included:15.13.1
   script:
     - npx cypress run
+  needs:
+    - install_front
