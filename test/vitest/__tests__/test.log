@@ -1,27 +1,39 @@
-si je suis sur windows, jutilise bash pour tester mon code et surtout je travaille avec quasar+laravel
-$ /build/build.sh
-/build/build.sh : Le terme �/build/build.sh� n'est pas reconnu comme nom d'applet de commande, fonction, fichier de 
-script ou programme ex�cutable. V�rifiez l'orthographe du nom, ou si un chemin d'acc�s existe, v�rifiez que le chemin 
-d'acc�s est correct et r�essayez.
-Au caract�re Ligne:1 : 1
-+ /build/build.sh
-+ ~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (/build/build.sh:String) [], CommandNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-Uploading artifacts for failed job
-00:01
-Version:      18.10.1
-Git revision: 3b43bf9f
-Git branch:   18-10-stable
-GO version:   go1.25.7 X:cacheprog
-Built:        2026-04-05T13:53:20Z
-OS/Arch:      windows/amd64
-Uploading artifacts...
-Runtime platform                                    arch=amd64 os=windows pid=7292 revision=3b43bf9f version=18.10.1
-WARNING: gl-auto-build-variables.env: no matching files. Ensure that the artifact path is relative to the working directory (C:\GitLab-Runner\builds\ECwrUQWsp\0\todolist\todolist_front) 
-ERROR: No files to upload                          
-Cleaning up project directory and file based variables
-00:01
-ERROR: Job failed: exit status 1
-j'ai creer 2 runner gitlab pour mon projet mais aucun ne fonctionne 
+stages:
+  - install
+  - build
+  - test
+
+variables:
+  NODE_ENV: production
+
+install_front:
+  stage: install
+  image: node:20
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1h
+
+build_front:
+  stage: build
+  image: node:20
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  needs:
+    - install_front
+
+test_front:
+  stage: test
+  image: node:20
+  script:
+    - npm install
+    - npm run test
+  needs:
+    - install_front
