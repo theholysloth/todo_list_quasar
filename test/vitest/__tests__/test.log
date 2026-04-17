@@ -6,6 +6,10 @@ stages:
 variables:
   NODE_ENV: production
 
+cache:
+  paths:
+    - node_modules/
+
 install_front:
   stage: install
   image: node:20
@@ -20,7 +24,6 @@ build_front:
   stage: build
   image: node:20
   script:
-    - npm install
     - npm run build
   artifacts:
     paths:
@@ -29,11 +32,47 @@ build_front:
   needs:
     - install_front
 
-test_front:
-  stage: test
+stages:
+  - install
+  - build
+  - test
+
+variables:
+  NODE_ENV: production
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+install_front:
+  stage: install
   image: node:20
   script:
     - npm install
-    - npm run test
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1h
+
+build_front:
+  stage: build
+  image: node:20
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
   needs:
     - install_front
+
+test:unit:
+  image: node:20
+  script:
+    - npm run test:unit
+
+test:e2e:
+  image: cypress/included:15.13.1
+  script:
+    - npx cypress run
