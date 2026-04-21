@@ -1,10 +1,8 @@
 stages:
   - install
-  - build
   - test
+  - build
 
-variables:
-  NODE_ENV: production
 
 cache:
   paths:
@@ -14,17 +12,19 @@ install_front:
   stage: install
   image: node:20
   script:
-    - npm install
-  artifacts:
+    - npm install --include=dev
+  cache:
     paths:
       - node_modules/
-    expire_in: 1h
+    #expire_in: 1h
 
 build_front:
   stage: build
   image: node:20
   script:
-    - npm run build
+    #- npm install -g @quasar/cli #important pour utiliser la cmd quasar
+    - npm install --include=dev # installe @quasar/app-vite et @quasar/cli local
+    - npx quasar build #npx utilise la version locale
   artifacts:
     paths:
       - dist/
@@ -36,14 +36,20 @@ test:unit:
   stage: test
   image: node:20
   script:
+    - npm install --include=dev
     - npm run test:unit
   needs:
     - install_front
 
 test:e2e:
   stage: test
-  image: cypress/included:15.13.1
+  image:
+    name: cypress/included:15.13.1
+    entrypoint: [""]
   script:
-    - npx cypress run
+    - npm install --include=dev #installer les dependances
+    - npx quasar dev &
+    - npx wait-on http://localhost:9000 #important que le server soit pret
+    - cypress run
   needs:
     - install_front
